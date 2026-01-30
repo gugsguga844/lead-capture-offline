@@ -1,50 +1,115 @@
-# Welcome to your Expo app 👋
+## 3C Leads – Offline Lead Capture
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Aplicativo mobile para captação de leads em eventos presenciais, com arquitetura **offline-first** e sincronização posterior com o HubSpot.
 
-## Get started
+- Foco inicial: evento **G4 Frontier** (MVP).
+- Objetivo: permitir que o time comercial cadastre leads mesmo sem internet (4G/5G ou Wi‑Fi), garantindo que **nenhum lead se perca**.
 
-1. Install dependencies
+---
+
+## Visão geral
+
+- **Plataforma**: React Native + Expo (managed workflow)
+- **Linguagem**: TypeScript
+- **Roteamento**: `expo-router`
+- **Formulário**: `react-hook-form`
+- **Storage offline**: `@react-native-async-storage/async-storage`
+- **Conectividade**: `expo-network`
+- **HTTP client**: `axios`
+- **Safe areas / notch**: `react-native-safe-area-context`
+
+---
+
+## Funcionalidades principais
+
+- **Formulário nativo offline**
+  - Campos obrigatórios alinhados ao formulário do HubSpot.
+  - Validação via `react-hook-form`.
+
+- **Persistência local de leads**
+  - Cada envio de formulário salva um `Lead` em `AsyncStorage`.
+  - Fila local identificada por `STORAGE_KEY`.
+
+- **Fila offline com gestão**
+  - Tela de **Fila Offline** lista todos os leads pendentes.
+  - Possível **editar** ou **excluir** leads locais antes de sincronizar.
+
+- **Sincronização com HubSpot**
+  - Verifica conexão via `expo-network`.
+  - Envia cada lead para o endpoint de submissão de formulários (`api.hsforms.com`).
+  - Em caso de sucesso, o lead é removido da fila local.
+  - Em caso de erro, o lead permanece para nova tentativa.
+
+---
+
+## Fluxo de dados (resumo)
+
+### 1. Cadastro offline
+
+- Usuário abre o app na tela `LeadCaptureScreen`.
+- Preenche os campos obrigatórios e opcionais.
+- Ao tocar em **"Salvar (Offline)"**:
+  - Validação dos campos via `react-hook-form`.
+  - Geração de `id` (`Date.now()`) e `timestamp` (`new Date().toISOString()`).
+  - Criação de objeto `Lead` com `funil_de_origem = "inbound"`.
+  - Salvamento no `AsyncStorage` através de `saveLeadLocally`.
+  - Contador **Fila Offline** é atualizado.
+
+### 2. Sincronização com HubSpot
+
+- Botão **"Sincronizar Nuvem"** na tela principal.
+- Fluxo:
+  1. Verifica conectividade (`Network.getNetworkStateAsync`).
+  2. Lê todos os leads da fila (`getStoredLeads`).
+  3. Para cada lead, chama `sendToHubSpot(lead)`.
+  4. Monta uma lista de sucessos e falhas.
+  5. Persiste novamente somente os que falharam (`clearStoredLeads`).
+  6. Exibe alerta resumindo o resultado.
+
+### 3. Gestão da fila offline
+
+- Botão **"Ver / editar fila offline"** na tela principal.
+- Leva para `OfflineLeadsScreen` (`app/offline-leads.tsx`).
+- Nessa tela é possível:
+  - Ver detalhes básicos de cada lead.
+  - **Editar** campos e salvar.
+  - **Excluir** leads indesejados/antigos.
+
+---
+
+## Estrutura principal
+
+- `app/index.tsx` → `LeadCaptureScreen` (tela principal de captura + sync).
+- `app/offline-leads.tsx` → `OfflineLeadsScreen` (gestão da fila offline).
+- `app/_layout.tsx` → Layout raiz com `expo-router` + `SafeAreaProvider`.
+- `services/offlineStorage.ts` → Funções de salvar/buscar/limpar leads no `AsyncStorage`.
+- `services/hubspotApi.ts` → Envio de leads para o HubSpot.
+- `constants/Configs.ts` → `HUBSPOT_CONFIG` e `STORAGE_KEY`.
+- `types/index.ts` → Tipos `LeadFormData` e `Lead`.
+
+---
+
+## Como rodar o projeto localmente
+
+1. **Instalar dependências**
 
    ```bash
    npm install
    ```
 
-2. Start the app
+2. **Iniciar o app (Metro bundler)**
 
    ```bash
    npx expo start
    ```
 
-In the output, you'll find options to open the app in a
+3. **Abrir no dispositivo/emulador**
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+   - Expo Go (Android/iOS) escaneando o QR Code.
+   - Ou emulador Android (`a` no terminal) / web (`w`).
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+---
 
-## Get a fresh project
+## Licença
 
-When you're ready, run:
-
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Projeto interno do **Grupo 3C** para uso em eventos presenciais. A licença padrão do template Expo (MIT) continua válida para o código base, mas a propriedade intelectual do produto pertence ao Grupo 3C.
