@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import {
-    ActivityIndicator,
-    Alert,
-    Modal,
-    ScrollView,
-    StatusBar,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  Alert,
+  Modal,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -100,8 +100,8 @@ export default function OfflineLeadsScreen() {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#f5f5f5' }}>
-      <StatusBar barStyle="dark-content" backgroundColor="#f5f5f5" />
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#010C14' }}>
+      <StatusBar barStyle="light-content" backgroundColor="#010C14" />
 
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
@@ -167,6 +167,7 @@ export default function OfflineLeadsScreen() {
                   value={form.vendedor}
                   onChangeText={(text) => handleChange('vendedor', text)}
                   placeholder="Vendedor"
+                  placeholderTextColor="#9EA7B3"
                 />
 
                 <Text style={styles.label}>Nome *</Text>
@@ -175,6 +176,7 @@ export default function OfflineLeadsScreen() {
                   value={form.nome}
                   onChangeText={(text) => handleChange('nome', text)}
                   placeholder="Nome"
+                  placeholderTextColor="#9EA7B3"
                 />
 
                 <Text style={styles.label}>E-mail *</Text>
@@ -185,6 +187,7 @@ export default function OfflineLeadsScreen() {
                   placeholder="E-mail"
                   keyboardType="email-address"
                   autoCapitalize="none"
+                  placeholderTextColor="#9EA7B3"
                 />
 
                 <Text style={styles.label}>Telefone *</Text>
@@ -194,6 +197,7 @@ export default function OfflineLeadsScreen() {
                   onChangeText={(text) => handleChange('telefone', text)}
                   placeholder="Telefone"
                   keyboardType="phone-pad"
+                  placeholderTextColor="#9EA7B3"
                 />
 
                 <Text style={styles.label}>Nome da empresa *</Text>
@@ -202,6 +206,7 @@ export default function OfflineLeadsScreen() {
                   value={form.empresa}
                   onChangeText={(text) => handleChange('empresa', text)}
                   placeholder="Nome da empresa"
+                  placeholderTextColor="#9EA7B3"
                 />
 
                 <Text style={styles.label}>Número de funcionários *</Text>
@@ -210,6 +215,7 @@ export default function OfflineLeadsScreen() {
                   value={form.numero_de_funcionarios}
                   onChangeText={(text) => handleChange('numero_de_funcionarios', text)}
                   placeholder="Número de funcionários"
+                  placeholderTextColor="#9EA7B3"
                 />
 
                 <Text style={styles.label}>Observações</Text>
@@ -218,6 +224,7 @@ export default function OfflineLeadsScreen() {
                   value={form.observacoes || ''}
                   onChangeText={(text) => handleChange('observacoes', text)}
                   placeholder="Observações"
+                  placeholderTextColor="#9EA7B3"
                   multiline
                   numberOfLines={4}
                   textAlignVertical="top"
@@ -229,6 +236,7 @@ export default function OfflineLeadsScreen() {
                   value={form.produto || ''}
                   onChangeText={(text) => handleChange('produto', text)}
                   placeholder="Produto"
+                  placeholderTextColor="#9EA7B3"
                 />
 
                 <View style={styles.modalActions}>
@@ -259,23 +267,24 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 16,
     paddingBottom: 8,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#010C14',
   },
   backButton: {
     marginBottom: 8,
   },
   backButtonText: {
-    color: '#1976d2',
+    color: '#FFBB28',
     fontSize: 14,
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#1a1a1a',
+    color: '#FFBB28',
+    fontFamily: 'PPNeueMachina-Ultrabold',
   },
   subtitle: {
     fontSize: 14,
-    color: '#666',
+    color: '#9EA7B3',
     marginTop: 4,
   },
   centerContent: {
@@ -285,33 +294,34 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 16,
-    color: '#777',
+    color: '#9EA7B3',
   },
   listContainer: {
     padding: 20,
     paddingBottom: 40,
   },
   card: {
-    backgroundColor: '#fff',
+    backgroundColor: '#0B1924',
     borderRadius: 12,
     padding: 16,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: '#eee',
+    borderColor: '#1E2D38',
   },
   cardTitle: {
     fontSize: 18,
     fontWeight: '600',
     marginBottom: 4,
+    color: '#FFFFFF',
   },
   cardSubtitle: {
     fontSize: 14,
-    color: '#555',
+    color: '#9EA7B3',
     marginBottom: 8,
   },
   cardLine: {
     fontSize: 13,
-    color: '#555',
+    color: '#9EA7B3',
   },
   cardActions: {
     flexDirection: 'row',
@@ -323,11 +333,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     borderRadius: 6,
     borderWidth: 1,
-    borderColor: '#1976d2',
+    borderColor: '#FFCD62',
     marginRight: 8,
   },
   editButtonText: {
-    color: '#1976d2',
+    color: '#FFBB28',
     fontSize: 14,
   },
   deleteButton: {
@@ -347,31 +357,35 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   modalContent: {
-    backgroundColor: '#fff',
+    backgroundColor: '#0B1924',
     borderRadius: 16,
     maxHeight: '90%',
     padding: 16,
+    borderWidth: 1,
+    borderColor: '#1E2D38',
   },
   modalTitle: {
     fontSize: 18,
     fontWeight: '600',
     marginBottom: 12,
+    color: '#FFFFFF',
   },
   label: {
     fontSize: 14,
     fontWeight: '600',
     marginBottom: 6,
     marginTop: 4,
-    color: '#424242',
+    color: '#FFFFFF',
   },
   input: {
     borderWidth: 1,
-    borderColor: '#e0e0e0',
+    borderColor: '#1E2D38',
     borderRadius: 8,
     padding: 10,
     marginBottom: 8,
     fontSize: 15,
-    backgroundColor: '#fafafa',
+    backgroundColor: '#0B1924',
+    color: '#FFFFFF',
   },
   textArea: {
     height: 100,
@@ -388,17 +402,19 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   cancelButtonText: {
-    color: '#555',
+    color: '#9EA7B3',
     fontSize: 14,
   },
   saveButton: {
-    backgroundColor: '#2e7d32',
+    backgroundColor: '#FFBB28',
     paddingVertical: 10,
     paddingHorizontal: 16,
     borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#FFCD62',
   },
   saveButtonText: {
-    color: '#fff',
+    color: '#0B1924',
     fontSize: 14,
     fontWeight: '600',
   },
