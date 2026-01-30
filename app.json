@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "lead-capture-offline",
+    "name": "3C Leads",
     "slug": "lead-capture-offline",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -12,6 +12,7 @@
       "supportsTablet": true
     },
     "android": {
+      "package": "com.grupo3c.leadcaptureoffline",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
@@ -44,6 +45,12 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "6c70adc7-eea0-4588-a7f4-3cce38e0a41c"
+      }
     }
   }
 }
