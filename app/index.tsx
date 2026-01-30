@@ -125,20 +125,22 @@ export default function LeadCaptureScreen() {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#f5f5f5' }}>
-      <StatusBar barStyle="dark-content" backgroundColor="#f5f5f5" />
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#010C14' }}>
+      <StatusBar barStyle="light-content" backgroundColor="#010C14" />
       <Stack.Screen options={{ title: '3C Leads', headerShown: false }} />
 
       <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.header}>
-          <Text style={styles.title}>Lead Capture</Text>
+          <Text style={styles.title}>G4 Frontier</Text>
           <Text style={styles.subtitle}>Grupo 3C</Text>
         </View>
 
         <View style={styles.statusCard}>
-          <Text style={styles.statusText}>
-            Fila Offline: <Text style={{fontWeight: 'bold'}}>{queueSize}</Text>
-          </Text>
+          <View style={styles.statusTextContainer}>
+            <Text style={styles.statusText}>
+              Fila Offline: <Text style={{fontWeight: 'bold'}}>{queueSize}</Text>
+            </Text>
+          </View>
           <TouchableOpacity 
             style={[styles.syncButton, (queueSize === 0 || isSyncing) && styles.disabledButton]} 
             onPress={onSync}
@@ -155,266 +157,290 @@ export default function LeadCaptureScreen() {
             style={styles.manageQueueButton}
             onPress={() => router.push('/offline-leads')}
           >
-            <Text style={styles.manageQueueText}>Ver / editar fila offline</Text>
+            <Text style={styles.manageQueueText}>Gerenciar fila offline</Text>
           </TouchableOpacity>
         </View>
 
         <View style={styles.formContainer}>
-          <Text style={styles.label}>Vendedor *</Text>
-          <Controller
-            control={control}
-            name="vendedor"
-            rules={{ required: true }}
-            render={({ field: { onChange, value } }) => (
-              <>
-                <TouchableOpacity
-                  style={styles.dropdown}
-                  onPress={() => setIsVendedorOpen(true)}
-                >
-                  <Text
-                    style={
-                      value ? styles.dropdownValue : styles.dropdownPlaceholder
-                    }
-                  >
-                    {value || 'Selecionar vendedor'}
-                  </Text>
-                </TouchableOpacity>
-
-                <Modal
-                  visible={isVendedorOpen}
-                  transparent
-                  animationType="slide"
-                  onRequestClose={() => {
-                    setIsVendedorOpen(false);
-                    setVendedorSearch('');
-                  }}
-                >
-                  <View style={styles.modalOverlay}>
-                    <View style={styles.modalContent}>
-                      <Text style={styles.modalTitle}>Vendedor</Text>
-                      <TextInput
-                        style={styles.searchInput}
-                        placeholder="Pesquisar"
-                        value={vendedorSearch}
-                        onChangeText={setVendedorSearch}
-                      />
-                      <ScrollView>
-                        {filteredVendedores.map((vend) => (
-                          <TouchableOpacity
-                            key={vend}
-                            style={styles.modalOption}
-                            onPress={() => {
-                              onChange(vend);
-                              setIsVendedorOpen(false);
-                              setVendedorSearch('');
-                            }}
-                          >
-                            <Text style={styles.modalOptionText}>{vend}</Text>
-                          </TouchableOpacity>
-                        ))}
-                      </ScrollView>
-                      <TouchableOpacity
-                        style={styles.modalCloseButton}
-                        onPress={() => {
-                          setIsVendedorOpen(false);
-                          setVendedorSearch('');
-                        }}
-                      >
-                        <Text style={styles.modalCloseButtonText}>Fechar</Text>
-                      </TouchableOpacity>
-                    </View>
-                  </View>
-                </Modal>
-              </>
-            )}
-          />
-          {errors.vendedor && <Text style={styles.error}>Obrigatório</Text>}
-
-          <Text style={styles.label}>Nome *</Text>
-          <Controller
-            control={control}
-            rules={{ required: true }}
-            name="nome"
-            render={({ field: { onChange, value } }) => (
-              <TextInput
-                style={styles.input}
-                onChangeText={onChange}
-                value={value}
-                placeholder="Ex: João Silva"
-              />
-            )}
-          />
-          {errors.nome && <Text style={styles.error}>Obrigatório</Text>}
-
-          <Text style={styles.label}>E-mail *</Text>
-          <Controller
-            control={control}
-            rules={{ required: true }}
-            name="email"
-            render={({ field: { onChange, value } }) => (
-              <TextInput
-                style={styles.input}
-                onChangeText={onChange}
-                value={value}
-                keyboardType="email-address"
-                autoCapitalize="none"
-                placeholder="joao@empresa.com"
-              />
-            )}
-          />
-          {errors.email && <Text style={styles.error}>Obrigatório</Text>}
-
-          <Text style={styles.label}>Telefone *</Text>
-          <Controller
-            control={control}
-            name="telefone"
-            rules={{ required: true }}
-            render={({ field: { onChange, value } }) => (
-              <TextInput
-                style={styles.input}
-                onChangeText={onChange}
-                value={value}
-                keyboardType="phone-pad"
-                placeholder="(00) 00000-0000"
-              />
-            )}
-          />
-          {errors.telefone && <Text style={styles.error}>Obrigatório</Text>}
-
-          <Text style={styles.label}>Nome da empresa *</Text>
-          <Controller
-            control={control}
-            name="empresa"
-            rules={{ required: true }}
-            render={({ field: { onChange, value } }) => (
-              <TextInput
-                style={styles.input}
-                onChangeText={onChange}
-                value={value}
-                placeholder="Ex: Grupo 3C"
-              />
-            )}
-          />
-          {errors.empresa && <Text style={styles.error}>Obrigatório</Text>}
-
-          <Text style={styles.label}>Número de funcionários *</Text>
-          <Controller
-            control={control}
-            name="numero_de_funcionarios"
-            rules={{ required: true }}
-            render={({ field: { onChange, value } }) => (
-              <>
-                <TouchableOpacity
-                  style={styles.dropdown}
-                  onPress={() => setIsFaixaOpen(true)}
-                >
-                  <Text
-                    style={
-                      value ? styles.dropdownValue : styles.dropdownPlaceholder
-                    }
-                  >
-                    {value || 'Selecionar número de funcionários'}
-                  </Text>
-                </TouchableOpacity>
-
-                <Modal
-                  visible={isFaixaOpen}
-                  transparent
-                  animationType="slide"
-                  onRequestClose={() => {
-                    setIsFaixaOpen(false);
-                    setFaixaSearch('');
-                  }}
-                >
-                  <View style={styles.modalOverlay}>
-                    <View style={styles.modalContent}>
-                      <Text style={styles.modalTitle}>Número de funcionários</Text>
-                      <TextInput
-                        style={styles.searchInput}
-                        placeholder="Pesquisar"
-                        value={faixaSearch}
-                        onChangeText={setFaixaSearch}
-                      />
-                      <ScrollView>
-                        {filteredFaixas.map((faixa) => (
-                          <TouchableOpacity
-                            key={faixa}
-                            style={styles.modalOption}
-                            onPress={() => {
-                              onChange(faixa);
-                              setIsFaixaOpen(false);
-                              setFaixaSearch('');
-                            }}
-                          >
-                            <Text style={styles.modalOptionText}>{faixa}</Text>
-                          </TouchableOpacity>
-                        ))}
-                      </ScrollView>
-                      <TouchableOpacity
-                        style={styles.modalCloseButton}
-                        onPress={() => {
-                          setIsFaixaOpen(false);
-                          setFaixaSearch('');
-                        }}
-                      >
-                        <Text style={styles.modalCloseButtonText}>Fechar</Text>
-                      </TouchableOpacity>
-                    </View>
-                  </View>
-                </Modal>
-              </>
-            )}
-          />
-          {errors.numero_de_funcionarios && (
-            <Text style={styles.error}>Obrigatório</Text>
-          )}
-
-          <Text style={styles.label}>Observações</Text>
-          <Controller
-            control={control}
-            name="observacoes"
-            render={({ field: { onChange, value } }) => (
-              <TextInput
-                style={[styles.input, styles.textArea]}
-                onChangeText={onChange}
-                value={value}
-                placeholder="Informações adicionais sobre o lead"
-                multiline
-                numberOfLines={4}
-                textAlignVertical="top"
-              />
-            )}
-          />
-
-          <Text style={styles.label}>Produto</Text>
-          <Controller
-            control={control}
-            name="produto"
-            render={({ field: { onChange, value } }) => (
-              <View style={styles.selectContainer}>
-                {PRODUTOS.map((prod) => (
+          <View>
+            <Text style={styles.label}>Vendedor *</Text>
+            <Controller
+              control={control}
+              name="vendedor"
+              rules={{ required: true }}
+              render={({ field: { onChange, value } }) => (
+                <>
                   <TouchableOpacity
-                    key={prod}
-                    style={[
-                      styles.optionButton,
-                      value === prod && styles.optionButtonSelected,
-                    ]}
-                    onPress={() => onChange(prod)}
+                    style={styles.dropdown}
+                    onPress={() => setIsVendedorOpen(true)}
                   >
                     <Text
-                      style={[
-                        styles.optionButtonText,
-                        value === prod && styles.optionButtonTextSelected,
-                      ]}
+                      style={
+                        value ? styles.dropdownValue : styles.dropdownPlaceholder
+                      }
                     >
-                      {prod}
+                      {value || 'Selecionar vendedor'}
                     </Text>
                   </TouchableOpacity>
-                ))}
-              </View>
+
+                  <Modal
+                    visible={isVendedorOpen}
+                    transparent
+                    animationType="slide"
+                    onRequestClose={() => {
+                      setIsVendedorOpen(false);
+                      setVendedorSearch('');
+                    }}
+                  >
+                    <View style={styles.modalOverlay}>
+                      <View style={styles.modalContent}>
+                        <Text style={styles.modalTitle}>Vendedor</Text>
+                        <TextInput
+                          style={styles.searchInput}
+                          placeholder="Pesquisar"
+                          placeholderTextColor="#9EA7B3"
+                          value={vendedorSearch}
+                          onChangeText={setVendedorSearch}
+                        />
+                        <ScrollView>
+                          {filteredVendedores.map((vend) => (
+                            <TouchableOpacity
+                              key={vend}
+                              style={styles.modalOption}
+                              onPress={() => {
+                                onChange(vend);
+                                setIsVendedorOpen(false);
+                                setVendedorSearch('');
+                              }}
+                            >
+                              <Text style={styles.modalOptionText}>{vend}</Text>
+                            </TouchableOpacity>
+                          ))}
+                        </ScrollView>
+                        <TouchableOpacity
+                          style={styles.modalCloseButton}
+                          onPress={() => {
+                            setIsVendedorOpen(false);
+                            setVendedorSearch('');
+                          }}
+                        >
+                          <Text style={styles.modalCloseButtonText}>Fechar</Text>
+                        </TouchableOpacity>
+                      </View>
+                    </View>
+                  </Modal>
+                </>
+              )}
+            />
+            {errors.vendedor && <Text style={styles.error}>Obrigatório</Text>}
+          </View>
+
+          <View>
+            <Text style={styles.label}>Nome *</Text>
+            <Controller
+              control={control}
+              rules={{ required: true }}
+              name="nome"
+              render={({ field: { onChange, value } }) => (
+                <TextInput
+                  style={styles.input}
+                  onChangeText={onChange}
+                  value={value}
+                  placeholder="Ex: João Silva"
+                  placeholderTextColor="#9EA7B3"
+                />
+              )}
+            />
+            {errors.nome && <Text style={styles.error}>Obrigatório</Text>}
+          </View>
+
+          <View>
+            <Text style={styles.label}>E-mail *</Text>
+            <Controller
+              control={control}
+              rules={{ required: true }}
+              name="email"
+              render={({ field: { onChange, value } }) => (
+                <TextInput
+                  style={styles.input}
+                  onChangeText={onChange}
+                  value={value}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  placeholder="joao@empresa.com"
+                  placeholderTextColor="#9EA7B3"
+                />
+              )}
+            />
+            {errors.email && <Text style={styles.error}>Obrigatório</Text>}
+          </View>
+
+          <View>
+            <Text style={styles.label}>Telefone *</Text>
+            <Controller
+              control={control}
+              name="telefone"
+              rules={{ required: true }}
+              render={({ field: { onChange, value } }) => (
+                <TextInput
+                  style={styles.input}
+                  onChangeText={onChange}
+                  value={value}
+                  keyboardType="phone-pad"
+                  placeholder="(00) 00000-0000"
+                  placeholderTextColor="#9EA7B3"
+                />
+              )}
+            />
+            {errors.telefone && <Text style={styles.error}>Obrigatório</Text>}
+          </View>
+
+          <View>
+            <Text style={styles.label}>Nome da empresa *</Text>
+            <Controller
+              control={control}
+              name="empresa"
+              rules={{ required: true }}
+              render={({ field: { onChange, value } }) => (
+                <TextInput
+                  style={styles.input}
+                  onChangeText={onChange}
+                  value={value}
+                  placeholder="Ex: Grupo 3C"
+                  placeholderTextColor="#9EA7B3"
+                />
+              )}
+            />
+            {errors.empresa && <Text style={styles.error}>Obrigatório</Text>}
+          </View>
+
+          <View>
+            <Text style={styles.label}>Número de funcionários *</Text>
+            <Controller
+              control={control}
+              name="numero_de_funcionarios"
+              rules={{ required: true }}
+              render={({ field: { onChange, value } }) => (
+                <>
+                  <TouchableOpacity
+                    style={styles.dropdown}
+                    onPress={() => setIsFaixaOpen(true)}
+                  >
+                    <Text
+                      style={
+                        value ? styles.dropdownValue : styles.dropdownPlaceholder
+                      }
+                    >
+                      {value || 'Selecionar número de funcionários'}
+                    </Text>
+                  </TouchableOpacity>
+
+                  <Modal
+                    visible={isFaixaOpen}
+                    transparent
+                    animationType="slide"
+                    onRequestClose={() => {
+                      setIsFaixaOpen(false);
+                      setFaixaSearch('');
+                    }}
+                  >
+                    <View style={styles.modalOverlay}>
+                      <View style={styles.modalContent}>
+                        <Text style={styles.modalTitle}>Número de funcionários</Text>
+                        <TextInput
+                          style={styles.searchInput}
+                          placeholder="Pesquisar"
+                          placeholderTextColor="#9EA7B3"
+                          value={faixaSearch}
+                          onChangeText={setFaixaSearch}
+                        />
+                        <ScrollView>
+                          {filteredFaixas.map((faixa) => (
+                            <TouchableOpacity
+                              key={faixa}
+                              style={styles.modalOption}
+                              onPress={() => {
+                                onChange(faixa);
+                                setIsFaixaOpen(false);
+                                setFaixaSearch('');
+                              }}
+                            >
+                              <Text style={styles.modalOptionText}>{faixa}</Text>
+                            </TouchableOpacity>
+                          ))}
+                        </ScrollView>
+                        <TouchableOpacity
+                          style={styles.modalCloseButton}
+                          onPress={() => {
+                            setIsFaixaOpen(false);
+                            setFaixaSearch('');
+                          }}
+                        >
+                          <Text style={styles.modalCloseButtonText}>Fechar</Text>
+                        </TouchableOpacity>
+                      </View>
+                    </View>
+                  </Modal>
+                </>
+              )}
+            />
+            {errors.numero_de_funcionarios && (
+              <Text style={styles.error}>Obrigatório</Text>
             )}
-          />
-          {errors.produto && <Text style={styles.error}>Obrigatório</Text>}
+          </View>
+
+          <View>
+            <Text style={styles.label}>Observações</Text>
+            <Controller
+              control={control}
+              name="observacoes"
+              render={({ field: { onChange, value } }) => (
+                <TextInput
+                  style={[styles.input, styles.textArea]}
+                  onChangeText={onChange}
+                  value={value}
+                  placeholder="Informações adicionais sobre o lead"
+                  placeholderTextColor="#9EA7B3"
+                  multiline
+                  numberOfLines={4}
+                  textAlignVertical="top"
+                />
+              )}
+            />
+
+          </View>
+
+          <View>
+            <Text style={styles.label}>Produto</Text>
+            <Controller
+              control={control}
+              name="produto"
+              render={({ field: { onChange, value } }) => (
+                <View style={styles.selectContainer}>
+                  {PRODUTOS.map((prod) => (
+                    <TouchableOpacity
+                      key={prod}
+                      style={[
+                        styles.optionButton,
+                        value === prod && styles.optionButtonSelected,
+                      ]}
+                      onPress={() => onChange(prod)}
+                    >
+                      <Text
+                        style={[
+                          styles.optionButtonText,
+                          value === prod && styles.optionButtonTextSelected,
+                        ]}
+                      >
+                        {prod}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              )}
+            />
+            {errors.produto && <Text style={styles.error}>Obrigatório</Text>}
+          </View>
 
           <TouchableOpacity style={styles.saveButton} onPress={handleSubmit(onSave)}>
             <Text style={styles.saveButtonText}>Salvar (Offline)</Text>
@@ -428,76 +454,90 @@ export default function LeadCaptureScreen() {
 const styles = StyleSheet.create({
   container: { padding: 20, paddingBottom: 50 },
   header: { marginBottom: 20, alignItems: 'center' },
-  title: { fontSize: 28, fontWeight: 'bold', color: '#1a1a1a' },
-  subtitle: { fontSize: 16, color: '#666', marginTop: 4 },
+  title: { fontSize: 28, fontWeight: 'bold', color: '#FFBB28', fontFamily: 'PPNeueMachina-Ultrabold' },
+  subtitle: { fontSize: 16, color: '#9EA7B3', marginTop: 4 },
   statusCard: { 
-    backgroundColor: '#e3f2fd', 
+    backgroundColor: '#0B1924', 
     padding: 15, 
     borderRadius: 12, 
     marginBottom: 25, 
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#bbdefb'
+    borderColor: '#1E2D38',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 12,
   },
-  statusText: { fontSize: 16, marginBottom: 12, color: '#1565c0' },
+  statusTextContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  statusText: { fontSize: 16, marginBottom: 12, color: '#FFFFFF' },
   syncButton: { 
-    backgroundColor: '#1976d2', 
+    backgroundColor: '#FFBB28', 
     paddingVertical: 12, 
     paddingHorizontal: 24, 
-    borderRadius: 8, 
+    borderRadius: 12, 
     width: '100%', 
-    alignItems: 'center' 
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#FFCD62',
   },
-  disabledButton: { backgroundColor: '#b0bec5' },
-  syncButtonText: { color: '#FFF', fontWeight: 'bold', fontSize: 16 },
+  disabledButton: { backgroundColor: '#1E2D38', borderColor: '#1E2D38' },
+  syncButtonText: { color: '#0B1924', fontWeight: 'bold', fontSize: 16 },
   manageQueueButton: {
     marginTop: 8,
     paddingVertical: 6,
   },
   manageQueueText: {
-    color: '#1976d2',
+    color: '#FFBB28',
+    fontWeight: 'bold',
+    textDecorationLine: 'underline',
     fontSize: 14,
     textAlign: 'center',
   },
   formContainer: { 
-    backgroundColor: '#FFF', 
+    backgroundColor: '#0B1924', 
     padding: 24, 
     borderRadius: 16, 
-    elevation: 4,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+    borderWidth: 1,
+    borderColor: '#1E2D38',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 12,
   },
-  label: { fontSize: 14, fontWeight: '600', marginBottom: 6, color: '#424242' },
+  label: { fontSize: 14, fontWeight: '600', marginBottom: 6, color: '#FFFFFF' },
   input: { 
     borderWidth: 1, 
-    borderColor: '#e0e0e0', 
-    borderRadius: 8, 
+    borderColor: '#1E2D38', 
+    borderRadius: 12, 
     padding: 12, 
     marginBottom: 12, 
     fontSize: 16,
-    backgroundColor: '#fafafa'
+    backgroundColor: '#0B1924',
+    color: '#FFFFFF',
   },
   dropdown: {
     borderWidth: 1,
-    borderColor: '#e0e0e0',
-    borderRadius: 8,
+    borderColor: '#1E2D38',
+    borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: 14,
     marginBottom: 12,
-    backgroundColor: '#fafafa',
+    backgroundColor: '#0B1924',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
   },
   dropdownValue: {
     fontSize: 16,
-    color: '#212121',
+    color: '#FFFFFF',
   },
   dropdownPlaceholder: {
     fontSize: 16,
-    color: '#9e9e9e',
+    color: '#9EA7B3',
   },
   selectContainer: {
     flexDirection: 'row',
@@ -506,24 +546,24 @@ const styles = StyleSheet.create({
   },
   optionButton: {
     borderWidth: 1,
-    borderColor: '#e0e0e0',
+    borderColor: '#1E2D38',
     borderRadius: 20,
     paddingVertical: 8,
     paddingHorizontal: 12,
     marginRight: 8,
     marginBottom: 8,
-    backgroundColor: '#fafafa',
+    backgroundColor: '#0B1924',
   },
   optionButtonSelected: {
-    backgroundColor: '#1976d2',
-    borderColor: '#1976d2',
+    backgroundColor: '#FFBB28',
+    borderColor: '#FFCD62',
   },
   optionButtonText: {
-    color: '#424242',
+    color: '#FFFFFF',
     fontSize: 14,
   },
   optionButtonTextSelected: {
-    color: '#fff',
+    color: '#0B1924',
     fontWeight: '600',
   },
   textArea: {
@@ -537,26 +577,29 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   modalContent: {
-    backgroundColor: '#fff',
+    backgroundColor: '#0B1924',
     borderRadius: 16,
     maxHeight: '80%',
     padding: 16,
+    borderWidth: 1,
+    borderColor: '#1E2D38',
   },
   modalTitle: {
     fontSize: 18,
     fontWeight: '600',
     marginBottom: 12,
-    color: '#212121',
+    color: '#FFBB28',
   },
   searchInput: {
     borderWidth: 1,
-    borderColor: '#e0e0e0',
-    borderRadius: 8,
+    borderColor: '#1E2D38',
+    borderRadius: 12,
     paddingHorizontal: 14,
     paddingVertical: 10,
-    marginBottom: 12,
-    backgroundColor: '#fafafa',
+    marginBottom: 12, 
+    backgroundColor: '#0B1924',
     fontSize: 16,
+    color: '#FFFFFF',
   },
   modalOption: {
     paddingVertical: 12,
@@ -564,7 +607,7 @@ const styles = StyleSheet.create({
   },
   modalOptionText: {
     fontSize: 16,
-    color: '#212121',
+    color: '#FFFFFF',
   },
   modalCloseButton: {
     marginTop: 8,
@@ -573,17 +616,19 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
   },
   modalCloseButtonText: {
-    color: '#1976d2',
+    color: '#FFBB28',
     fontSize: 14,
     fontWeight: '600',
   },
-  error: { color: '#d32f2f', fontSize: 12, marginBottom: 10, marginTop: -8 },
+  error: { color: '#FF5A5F', fontSize: 12, marginBottom: 10, marginTop: -8 },
   saveButton: { 
-    backgroundColor: '#2e7d32', 
+    backgroundColor: '#FFBB28', 
     padding: 16, 
-    borderRadius: 8, 
+    borderRadius: 12, 
     marginTop: 12, 
-    alignItems: 'center' 
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#FFCD62',
   },
-  saveButtonText: { color: '#FFF', fontSize: 18, fontWeight: 'bold' }
+  saveButtonText: { color: '#0B1924', fontSize: 16, fontWeight: 'bold' }
 });
