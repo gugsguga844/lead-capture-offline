@@ -1,6 +1,6 @@
 export const HUBSPOT_CONFIG = {
     PORTAL_ID: "48528107",
-    FORM_GUID: "405572c2-afba-4271-9c25-6c8e02033bbd",
+    FORM_GUID: "262e6b0f-e0a0-4b0d-9a56-af1ff47da433",
     BASE_URL: "https://api.hsforms.com/submissions/v3/integration/submit"
 }
 
