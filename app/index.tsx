@@ -70,7 +70,8 @@ export default function LeadCaptureScreen() {
 
   const updateQueueCount = async () => {
     const leads = await getStoredLeads();
-    setQueueSize(leads.length);
+    const pending = leads.filter((lead) => !lead.synced);
+    setQueueSize(pending.length);
   };
 
   const onSave = async (data: LeadFormData) => {
@@ -94,33 +95,46 @@ export default function LeadCaptureScreen() {
 
     setIsSyncing(true);
     const leads = await getStoredLeads();
-    
-    if (leads.length === 0) {
-      Alert.alert("Vazio", "Nenhum lead para enviar.");
+
+    const pendingLeads = leads.filter((lead) => !lead.synced);
+
+    if (pendingLeads.length === 0) {
+      Alert.alert("Vazio", "Nenhum lead pendente para enviar.");
       setIsSyncing(false);
       return;
     }
 
     let successCount = 0;
-    const failedLeads: Lead[] = [];
+    let failedCount = 0;
 
-    for (const lead of leads) {
+    const updatedLeads: Lead[] = [...leads];
+
+    for (const lead of pendingLeads) {
       const success = await sendToHubSpot(lead);
       if (success) {
         successCount++;
+        const index = updatedLeads.findIndex((l) => l.id === lead.id);
+        if (index !== -1) {
+          updatedLeads[index] = {
+            ...updatedLeads[index],
+            synced: true,
+            syncedAt: new Date().toISOString(),
+          };
+        }
       } else {
-        failedLeads.push(lead);
+        failedCount++;
       }
     }
 
-    await clearStoredLeads(failedLeads);
-    setQueueSize(failedLeads.length);
+    await clearStoredLeads(updatedLeads);
+    const remainingPending = updatedLeads.filter((lead) => !lead.synced).length;
+    setQueueSize(remainingPending);
     setIsSyncing(false);
 
-    if (failedLeads.length > 0) {
-      Alert.alert("Atenção", `${successCount} enviados. ${failedLeads.length} falharam.`);
+    if (failedCount > 0) {
+      Alert.alert("Atenção", `${successCount} enviados. ${failedCount} falharam.`);
     } else {
-      Alert.alert("Sucesso Total!", `${successCount} leads enviados!`);
+      Alert.alert("Sucesso!", `${successCount} leads sincronizados com a nuvem!`);
     }
   };
 
@@ -129,7 +143,10 @@ export default function LeadCaptureScreen() {
       <StatusBar barStyle="light-content" backgroundColor="#010C14" />
       <Stack.Screen options={{ title: '3C Leads', headerShown: false }} />
 
-      <ScrollView contentContainerStyle={styles.container}>
+      <ScrollView
+        contentContainerStyle={styles.container}
+        keyboardShouldPersistTaps="handled"
+      >
         <View style={styles.header}>
           <Text style={styles.title}>G4 Frontier</Text>
           <Text style={styles.subtitle}>Grupo 3C</Text>

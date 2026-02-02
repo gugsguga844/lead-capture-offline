@@ -25,6 +25,8 @@ export const saveLeadLocally = async (data: LeadFormData): Promise<boolean> => {
       id: Date.now(),
       timestamp: new Date().toISOString(),
       funil_de_origem: 'inbound',
+      synced: false,
+      syncedAt: null,
     };
 
     const updated = [...existing, newLead];
