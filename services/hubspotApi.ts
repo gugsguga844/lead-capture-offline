@@ -36,8 +36,8 @@ export const sendToHubSpot = async (lead: Lead): Promise<boolean> => {
       { name: '0-2/funil_de_origem', value: lead.funil_de_origem || 'inbound' },
     ],
     context: {
-      pageUri: "www.grupo3c.com.br/evento-offline",
-      pageName: "App Captura Mobile"
+      pageUri: "app://3c-leads-offline",
+      pageName: "3C Leads"
     }
   };
 
