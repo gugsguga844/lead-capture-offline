@@ -13,5 +13,6 @@ export type Lead = LeadFormData & {
   id: number;
   timestamp: string;
   funil_de_origem: string;
+  synced?: boolean;
+  syncedAt?: string | null;
 };
-

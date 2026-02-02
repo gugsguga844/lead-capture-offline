@@ -18,6 +18,30 @@ import { useRouter } from 'expo-router';
 import { clearStoredLeads, getStoredLeads } from '../services/offlineStorage';
 import { Lead, LeadFormData } from '../types';
 
+const VENDEDORES = [
+  'Kesley Oliveira',
+  'Alexsandy Corrêa',
+  'Jehnnifer Padilha',
+  'Lucio Ramos',
+  'Matheus Gerik',
+  'Thomas Ferreira',
+];
+
+const FAIXAS_FUNCIONARIOS = [
+  '1',
+  '2 a 5',
+  '6 a 20',
+  '21 a 100',
+  '101 a 500',
+  '+501',
+];
+
+const PRODUTOS = [
+  'Core',
+  'Planejamento Estratégico',
+  'Agentes IA',
+];
+
 export default function OfflineLeadsScreen() {
   const router = useRouter();
 
@@ -25,6 +49,10 @@ export default function OfflineLeadsScreen() {
   const [isLoading, setIsLoading] = useState(true);
   const [editingLead, setEditingLead] = useState<Lead | null>(null);
   const [form, setForm] = useState<LeadFormData | null>(null);
+
+  const totalLeads = leads.length;
+  const pendingLeads = leads.filter((lead) => !lead.synced).length;
+  const syncedLeads = totalLeads - pendingLeads;
 
   useEffect(() => {
     loadLeads();
@@ -109,6 +137,11 @@ export default function OfflineLeadsScreen() {
         </TouchableOpacity>
         <Text style={styles.title}>Fila Offline</Text>
         <Text style={styles.subtitle}>Leads salvos no dispositivo</Text>
+        {totalLeads > 0 && (
+          <Text style={styles.summaryText}>
+            Total: {totalLeads} · Pendentes: {pendingLeads} · Sincronizados: {syncedLeads}
+          </Text>
+        )}
       </View>
 
       {isLoading ? (
@@ -125,18 +158,27 @@ export default function OfflineLeadsScreen() {
             <View key={lead.id} style={styles.card}>
               <Text style={styles.cardTitle}>{lead.nome}</Text>
               <Text style={styles.cardSubtitle}>{lead.email}</Text>
+              <View style={styles.statusBadgeRow}>
+                <View style={lead.synced ? styles.syncedBadge : styles.pendingBadge}>
+                  <Text style={lead.synced ? styles.syncedBadgeText : styles.pendingBadgeText}>
+                    {lead.synced ? 'Sincronizado' : 'Pendente'}
+                  </Text>
+                </View>
+              </View>
               <Text style={styles.cardLine}>Empresa: {lead.empresa}</Text>
               <Text style={styles.cardLine}>Vendedor: {lead.vendedor}</Text>
               <Text style={styles.cardLine}>Funcionários: {lead.numero_de_funcionarios}</Text>
               <Text style={styles.cardLine}>Criado em: {new Date(lead.timestamp).toLocaleString()}</Text>
 
               <View style={styles.cardActions}>
-                <TouchableOpacity
-                  style={styles.editButton}
-                  onPress={() => openEdit(lead)}
-                >
-                  <Text style={styles.editButtonText}>Editar</Text>
-                </TouchableOpacity>
+                {!lead.synced && (
+                  <TouchableOpacity
+                    style={styles.editButton}
+                    onPress={() => openEdit(lead)}
+                  >
+                    <Text style={styles.editButtonText}>Editar</Text>
+                  </TouchableOpacity>
+                )}
                 <TouchableOpacity
                   style={styles.deleteButton}
                   onPress={() => handleDelete(lead)}
@@ -162,13 +204,27 @@ export default function OfflineLeadsScreen() {
             {form && (
               <ScrollView>
                 <Text style={styles.label}>Vendedor *</Text>
-                <TextInput
-                  style={styles.input}
-                  value={form.vendedor}
-                  onChangeText={(text) => handleChange('vendedor', text)}
-                  placeholder="Vendedor"
-                  placeholderTextColor="#9EA7B3"
-                />
+                <View style={styles.selectContainer}>
+                  {VENDEDORES.map((vend) => (
+                    <TouchableOpacity
+                      key={vend}
+                      style={[
+                        styles.optionButton,
+                        form.vendedor === vend && styles.optionButtonSelected,
+                      ]}
+                      onPress={() => handleChange('vendedor', vend)}
+                    >
+                      <Text
+                        style={[
+                          styles.optionButtonText,
+                          form.vendedor === vend && styles.optionButtonTextSelected,
+                        ]}
+                      >
+                        {vend}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
 
                 <Text style={styles.label}>Nome *</Text>
                 <TextInput
@@ -210,13 +266,27 @@ export default function OfflineLeadsScreen() {
                 />
 
                 <Text style={styles.label}>Número de funcionários *</Text>
-                <TextInput
-                  style={styles.input}
-                  value={form.numero_de_funcionarios}
-                  onChangeText={(text) => handleChange('numero_de_funcionarios', text)}
-                  placeholder="Número de funcionários"
-                  placeholderTextColor="#9EA7B3"
-                />
+                <View style={styles.selectContainer}>
+                  {FAIXAS_FUNCIONARIOS.map((faixa) => (
+                    <TouchableOpacity
+                      key={faixa}
+                      style={[
+                        styles.optionButton,
+                        form.numero_de_funcionarios === faixa && styles.optionButtonSelected,
+                      ]}
+                      onPress={() => handleChange('numero_de_funcionarios', faixa)}
+                    >
+                      <Text
+                        style={[
+                          styles.optionButtonText,
+                          form.numero_de_funcionarios === faixa && styles.optionButtonTextSelected,
+                        ]}
+                      >
+                        {faixa}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
 
                 <Text style={styles.label}>Observações</Text>
                 <TextInput
@@ -231,13 +301,27 @@ export default function OfflineLeadsScreen() {
                 />
 
                 <Text style={styles.label}>Produto</Text>
-                <TextInput
-                  style={styles.input}
-                  value={form.produto || ''}
-                  onChangeText={(text) => handleChange('produto', text)}
-                  placeholder="Produto"
-                  placeholderTextColor="#9EA7B3"
-                />
+                <View style={styles.selectContainer}>
+                  {PRODUTOS.map((prod) => (
+                    <TouchableOpacity
+                      key={prod}
+                      style={[
+                        styles.optionButton,
+                        form.produto === prod && styles.optionButtonSelected,
+                      ]}
+                      onPress={() => handleChange('produto', prod)}
+                    >
+                      <Text
+                        style={[
+                          styles.optionButtonText,
+                          form.produto === prod && styles.optionButtonTextSelected,
+                        ]}
+                      >
+                        {prod}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
 
                 <View style={styles.modalActions}>
                   <TouchableOpacity
@@ -287,6 +371,11 @@ const styles = StyleSheet.create({
     color: '#9EA7B3',
     marginTop: 4,
   },
+  summaryText: {
+    fontSize: 13,
+    color: '#9EA7B3',
+    marginTop: 4,
+  },
   centerContent: {
     flex: 1,
     justifyContent: 'center',
@@ -322,6 +411,38 @@ const styles = StyleSheet.create({
   cardLine: {
     fontSize: 13,
     color: '#9EA7B3',
+  },
+  statusBadgeRow: {
+    marginTop: 6,
+    marginBottom: 8,
+  },
+  pendingBadge: {
+    alignSelf: 'flex-start',
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+    borderRadius: 999,
+    backgroundColor: '#FFBB28',
+    borderWidth: 1,
+    borderColor: '#FFCD62',
+  },
+  pendingBadgeText: {
+    color: '#0B1924',
+    fontSize: 11,
+    fontWeight: '600',
+  },
+  syncedBadge: {
+    alignSelf: 'flex-start',
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+    borderRadius: 999,
+    backgroundColor: '#1E2D38',
+    borderWidth: 1,
+    borderColor: '#2E4A5F',
+  },
+  syncedBadgeText: {
+    color: '#9EA7B3',
+    fontSize: 11,
+    fontWeight: '600',
   },
   cardActions: {
     flexDirection: 'row',
@@ -386,6 +507,34 @@ const styles = StyleSheet.create({
     fontSize: 15,
     backgroundColor: '#0B1924',
     color: '#FFFFFF',
+  },
+  selectContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginBottom: 8,
+  },
+  optionButton: {
+    borderWidth: 1,
+    borderColor: '#1E2D38',
+    borderRadius: 20,
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    marginRight: 8,
+    marginBottom: 8,
+    backgroundColor: '#0B1924',
+  },
+  optionButtonSelected: {
+    backgroundColor: '#FFBB28',
+    borderColor: '#FFCD62',
+  },
+  optionButtonText: {
+    color: '#FFFFFF',
+    fontSize: 13,
+  },
+  optionButtonTextSelected: {
+    color: '#0B1924',
+    fontSize: 13,
+    fontWeight: '600',
   },
   textArea: {
     height: 100,
